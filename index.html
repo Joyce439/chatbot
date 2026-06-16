@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CitraBot AI - CitraMaya 3D Hub Centre 2.0</title>
+<style>
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#24105f,#6c3ee6,#00bcd4);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#222;
+  }
+  .chatbox{
+    width:95%;
+    max-width:760px;
+    height:88vh;
+    background:#fff;
+    border-radius:24px;
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .header{
+    background:linear-gradient(90deg,#3b1c9b,#7c4dff,#00bcd4);
+    color:white;
+    padding:22px;
+    text-align:center;
+  }
+  .header h1{margin:0;font-size:26px;}
+  .header p{margin:6px 0 0;font-size:14px;}
+  .messages{
+    flex:1;
+    padding:20px;
+    overflow-y:auto;
+    background:#f6f7fb;
+  }
+  .msg{
+    margin:10px 0;
+    padding:13px 16px;
+    border-radius:16px;
+    max-width:85%;
+    line-height:1.45;
+    font-size:15px;
+  }
+  .bot{
+    background:#ffffff;
+    border:1px solid #ddd;
+    align-self:flex-start;
+  }
+  .user{
+    background:#e7ddff;
+    margin-left:auto;
+  }
+  .quick{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:12px 18px;
+    background:#fff;
+    border-top:1px solid #eee;
+  }
+  .quick button{
+    border:none;
+    background:#eee8ff;
+    color:#30116d;
+    padding:9px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    font-size:13px;
+  }
+  .input{
+    display:flex;
+    padding:14px;
+    background:#fff;
+    border-top:1px solid #ddd;
+  }
+  input{
+    flex:1;
+    padding:14px;
+    border:1px solid #ccc;
+    border-radius:14px;
+    font-size:15px;
+  }
+  button.send{
+    margin-left:10px;
+    padding:14px 18px;
+    border:none;
+    border-radius:14px;
+    background:#5b2be0;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+  }
+</style>
+</head>
+<body>
+<div class="chatbox">
+  <div class="header">
+    <h1>🤖 CitraBot AI</h1>
+    <p>Pembantu Pintar Kurator Maya CitraMaya 3D Hub Centre 2.0</p>
+  </div>
+
+  <div class="messages" id="messages">
+    <div class="msg bot">
+      Hai, saya <b>CitraBot AI</b>. Saya boleh membantu anda berkaitan Galeri Maya, e-Portfolio, Repositori Karya dan Pentaksiran.
+    </div>
+  </div>
+
+  <div class="quick">
+    <button onclick="quickAsk('Cara masuk galeri maya')">Cara masuk galeri maya</button>
+    <button onclick="quickAsk('Cara hantar karya')">Cara hantar karya</button>
+    <button onclick="quickAsk('Cara bina e-Portfolio')">Cara bina e-Portfolio</button>
+    <button onclick="quickAsk('Cara lihat rubrik')">Cara lihat rubrik</button>
+    <button onclick="quickAsk('Apa fungsi CitraMaya')">Fungsi CitraMaya</button>
+  </div>
+
+  <div class="input">
+    <input id="userInput" placeholder="Taip soalan anda di sini..." onkeydown="if(event.key==='Enter')sendMessage()">
+    <button class="send" onclick="sendMessage()">Hantar</button>
+  </div>
+</div>
+
+<script>
+const answers = [
+  {
+    keys:["masuk","galeri","spatial","maya"],
+    ans:"Untuk masuk ke Galeri Maya, klik menu <b>Galeri Maya</b>, pilih kursus yang berkaitan, kemudian tekan butang <b>Masuk ke Spatial Gallery</b>."
+  },
+  {
+    keys:["hantar","upload","muat naik","karya"],
+    ans:"Untuk menghantar karya, klik menu <b>Repositori Karya</b>, pilih folder kursus, kemudian muat naik fail karya mengikut arahan pensyarah."
+  },
+  {
+    keys:["portfolio","e-portfolio","eportfolio"],
+    ans:"Untuk membina e-Portfolio, pelajar perlu menyediakan maklumat diri, hasil karya, proses penghasilan, refleksi dan pautan digital karya."
+  },
+  {
+    keys:["rubrik","markah","pentaksiran","penilaian"],
+    ans:"Untuk melihat rubrik, klik menu <b>Pentaksiran</b>. Rubrik disediakan mengikut tugasan, hasil pembelajaran kursus dan kriteria penilaian."
+  },
+  {
+    keys:["fungsi","citramaya","hub","pusat"],
+    ans:"CitraMaya 3D Hub Centre 2.0 berfungsi sebagai pusat sehenti untuk galeri maya, repositori karya, e-Portfolio, pentaksiran digital dan sokongan AI bagi Pendidikan Seni Visual."
+  },
+  {
+    keys:["bantuan","pensyarah","masalah"],
+    ans:"Jika menghadapi masalah, sila rujuk pensyarah kursus atau pentadbir CitraMaya 3D Hub Centre 2.0."
+  }
+];
+
+function addMessage(text, type){
+  const box = document.getElementById("messages");
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+  div.innerHTML = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function getAnswer(q){
+  q = q.toLowerCase();
+  for(let item of answers){
+    if(item.keys.some(k => q.includes(k))){
+      return item.ans;
+    }
+  }
+  return "Maaf, saya belum mempunyai jawapan khusus untuk soalan ini. Sila cuba tanya tentang <b>galeri maya, e-Portfolio, repositori karya, rubrik</b> atau hubungi pensyarah kursus.";
+}
+
+function sendMessage(){
+  const input = document.getElementById("userInput");
+  const q = input.value.trim();
+  if(!q) return;
+  addMessage(q, "user");
+  input.value = "";
+  setTimeout(()=> addMessage(getAnswer(q), "bot"), 400);
+}
+
+function quickAsk(text){
+  document.getElementById("userInput").value = text;
+  sendMessage();
+}
+</script>
+</body>
+</html>
